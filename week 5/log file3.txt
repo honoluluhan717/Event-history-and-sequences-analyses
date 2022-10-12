@@ -1,0 +1,783 @@
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\fanwa.BC\Downloads\Untitled.log
+  log type:  text
+ opened on:  19 Feb 2019, 10:49:32
+
+. dis comb(10, 4)*.3^4*.7^6
+.20012095
+
+. do "C:\Users\fanwa.BC\AppData\Local\Temp\STD2794_000000.tmp"
+
+. drop if deathyr >= .
+(3,577 observations deleted)
+
+. stset deathyr, failure(deathw12) id(hhidpn) origin(time byear) enter(time firstinyr)
+
+                id:  hhidpn
+     failure event:  deathw12 != 0 & deathw12 < .
+obs. time interval:  (deathyr[_n-1], deathyr]
+ enter on or after:  time firstinyr
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time byear
+
+------------------------------------------------------------------------------
+     33,918  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+     33,918  observations remaining, representing
+     33,918  subjects
+     10,716  failures in single-failure-per-subject data
+    441,292  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =        18
+                                          last observed exit t =       115
+
+. tab _t0
+
+   analysis |
+  time when |
+     record |
+     begins |      Freq.     Percent        Cum.
+------------+-----------------------------------
+         18 |          1        0.00        0.00
+         19 |          1        0.00        0.01
+         22 |          2        0.01        0.01
+         23 |          2        0.01        0.02
+         24 |          3        0.01        0.03
+         25 |          7        0.02        0.05
+         26 |          4        0.01        0.06
+         27 |          3        0.01        0.07
+         28 |          7        0.02        0.09
+         29 |          9        0.03        0.11
+         30 |         11        0.03        0.15
+         31 |         17        0.05        0.20
+         32 |         20        0.06        0.26
+         33 |         20        0.06        0.32
+         34 |         27        0.08        0.40
+         35 |         30        0.09        0.48
+         36 |         48        0.14        0.63
+         37 |         44        0.13        0.75
+         38 |         75        0.22        0.98
+         39 |         78        0.23        1.21
+         40 |         90        0.27        1.47
+         41 |         92        0.27        1.74
+         42 |        135        0.40        2.14
+         43 |        173        0.51        2.65
+         44 |        217        0.64        3.29
+         45 |        264        0.78        4.07
+         46 |        330        0.97        5.04
+         47 |        390        1.15        6.19
+         48 |        478        1.41        7.60
+         49 |        629        1.85        9.46
+         50 |        797        2.35       11.80
+         51 |      2,523        7.44       19.24
+         52 |      2,584        7.62       26.86
+         53 |      2,359        6.96       33.82
+         54 |      2,307        6.80       40.62
+         55 |      2,228        6.57       47.19
+         56 |      2,003        5.91       53.09
+         57 |      1,056        3.11       56.21
+         58 |      1,077        3.18       59.38
+         59 |        904        2.67       62.05
+         60 |        969        2.86       64.90
+         61 |        883        2.60       67.51
+         62 |        437        1.29       68.80
+         63 |        296        0.87       69.67
+         64 |        262        0.77       70.44
+         65 |        267        0.79       71.23
+         66 |        204        0.60       71.83
+         67 |        231        0.68       72.51
+         68 |        512        1.51       74.02
+         69 |        499        1.47       75.49
+         70 |        795        2.34       77.83
+         71 |        884        2.61       80.44
+         72 |        833        2.46       82.90
+         73 |        750        2.21       85.11
+         74 |        731        2.16       87.26
+         75 |        459        1.35       88.62
+         76 |        402        1.19       89.80
+         77 |        379        1.12       90.92
+         78 |        339        1.00       91.92
+         79 |        335        0.99       92.91
+         80 |        358        1.06       93.96
+         81 |        335        0.99       94.95
+         82 |        277        0.82       95.77
+         83 |        240        0.71       96.47
+         84 |        238        0.70       97.18
+         85 |        199        0.59       97.76
+         86 |        161        0.47       98.24
+         87 |        128        0.38       98.61
+         88 |        108        0.32       98.93
+         89 |         87        0.26       99.19
+         90 |         78        0.23       99.42
+         91 |         38        0.11       99.53
+         92 |         35        0.10       99.63
+         93 |         35        0.10       99.74
+         94 |         21        0.06       99.80
+         95 |         17        0.05       99.85
+         96 |         19        0.06       99.91
+         97 |          7        0.02       99.93
+         98 |         12        0.04       99.96
+         99 |          4        0.01       99.97
+        100 |          4        0.01       99.99
+        101 |          3        0.01       99.99
+        103 |          2        0.01      100.00
+------------+-----------------------------------
+      Total |     33,918      100.00
+
+. drop if _t0 < 50
+(3,207 observations deleted)
+
+. 
+end of do-file
+
+. do "C:\Users\fanwa.BC\AppData\Local\Temp\STD2794_000000.tmp"
+
+. streg female eduyrs, dist(weibull) // PH with exp(beta); note the 95% CI for ln_p (= 0) or p (= 1) --> constant hazard rejected
+
+         failure _d:  deathw12
+   analysis time _t:  (deathyr-origin)
+             origin:  time byear
+  enter on or after:  time firstinyr
+                 id:  hhidpn
+
+Fitting constant-only model:
+
+Iteration 0:   log likelihood = -2642.3155
+Iteration 1:   log likelihood = -3662256.8
+Iteration 2:   log likelihood =          .
+Iteration 3:   log likelihood =          .
+Iteration 4:   log likelihood =          .
+Iteration 5:   log likelihood =          .
+Iteration 6:   log likelihood =          .
+Iteration 7:   log likelihood =          .
+Iteration 8:   log likelihood =          .
+Iteration 9:   log likelihood =          .
+Iteration 10:   log likelihood =          .
+Iteration 11:   log likelihood =          .
+Iteration 12:   log likelihood =          .
+Iteration 13:   log likelihood =          .
+Iteration 14:   log likelihood =          .
+Iteration 15:   log likelihood =          .
+Iteration 16:   log likelihood =          .
+Iteration 17:   log likelihood =          .
+Iteration 18:   log likelihood =          .
+Iteration 19:   log likelihood =          .
+Iteration 20:   log likelihood =          .
+convergence not achieved
+
+Attempting constant-only model again:
+
+initial:       log likelihood = -4593.7235
+alternative:   log likelihood = -2087.7189
+rescale:       log likelihood = -2087.7189
+rescale eq:    log likelihood = -225.59262
+Iteration 0:   log likelihood = -225.59262  (not concave)
+Iteration 1:   log likelihood =  1382.6521  
+Iteration 2:   log likelihood =  2714.4366  
+Iteration 3:   log likelihood =  3011.5633  
+Iteration 4:   log likelihood =  3014.3307  
+Iteration 5:   log likelihood =  3014.3332  
+Iteration 6:   log likelihood =  3014.3332  
+
+Fitting full model:
+
+Iteration 0:   log likelihood =  3014.3332  
+Iteration 1:   log likelihood =  3334.9896  
+Iteration 2:   log likelihood =  3343.3105  
+Iteration 3:   log likelihood =  3343.3169  
+Iteration 4:   log likelihood =  3343.3169  
+
+Weibull PH regression
+
+No. of subjects =       30,607                  Number of obs    =      30,607
+No. of failures =       10,550
+Time at risk    =       394767
+                                                LR chi2(2)       =      657.97
+Log likelihood  =    3343.3169                  Prob > chi2      =      0.0000
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      female |   .6990074   .0137217   -18.24   0.000     .6726243    .7264254
+      eduyrs |   .9533439   .0024024   -18.96   0.000     .9486468    .9580643
+       _cons |   1.58e-16   5.52e-17  -104.33   0.000     7.99e-17    3.14e-16
+-------------+----------------------------------------------------------------
+       /ln_p |    2.11648   .0092266   229.39   0.000     2.098396    2.134564
+-------------+----------------------------------------------------------------
+           p |   8.301866   .0765982                      8.153086    8.453362
+         1/p |   .1204548   .0011114                      .1182961    .1226529
+------------------------------------------------------------------------------
+Note: Estimates are transformed only in the first equation.
+Note: _cons estimates baseline hazard.
+
+. 
+end of do-file
+
+. do "C:\Users\fanwa.BC\AppData\Local\Temp\STD2794_000000.tmp"
+
+. streg female eduyrs, dist(weibull) nohr // PH with beta
+
+         failure _d:  deathw12
+   analysis time _t:  (deathyr-origin)
+             origin:  time byear
+  enter on or after:  time firstinyr
+                 id:  hhidpn
+
+Fitting constant-only model:
+
+Iteration 0:   log likelihood = -2642.3155
+Iteration 1:   log likelihood = -3662256.8
+Iteration 2:   log likelihood =          .
+Iteration 3:   log likelihood =          .
+Iteration 4:   log likelihood =          .
+Iteration 5:   log likelihood =          .
+Iteration 6:   log likelihood =          .
+Iteration 7:   log likelihood =          .
+Iteration 8:   log likelihood =          .
+Iteration 9:   log likelihood =          .
+Iteration 10:   log likelihood =          .
+Iteration 11:   log likelihood =          .
+Iteration 12:   log likelihood =          .
+Iteration 13:   log likelihood =          .
+Iteration 14:   log likelihood =          .
+Iteration 15:   log likelihood =          .
+Iteration 16:   log likelihood =          .
+Iteration 17:   log likelihood =          .
+Iteration 18:   log likelihood =          .
+Iteration 19:   log likelihood =          .
+Iteration 20:   log likelihood =          .
+convergence not achieved
+
+Attempting constant-only model again:
+
+initial:       log likelihood = -4593.7235
+alternative:   log likelihood = -2087.7189
+rescale:       log likelihood = -2087.7189
+rescale eq:    log likelihood = -225.59262
+Iteration 0:   log likelihood = -225.59262  (not concave)
+Iteration 1:   log likelihood =  1382.6521  
+Iteration 2:   log likelihood =  2714.4366  
+Iteration 3:   log likelihood =  3011.5633  
+Iteration 4:   log likelihood =  3014.3307  
+Iteration 5:   log likelihood =  3014.3332  
+Iteration 6:   log likelihood =  3014.3332  
+
+Fitting full model:
+
+Iteration 0:   log likelihood =  3014.3332  
+Iteration 1:   log likelihood =  3334.9896  
+Iteration 2:   log likelihood =  3343.3105  
+Iteration 3:   log likelihood =  3343.3169  
+Iteration 4:   log likelihood =  3343.3169  
+
+Weibull PH regression
+
+No. of subjects =       30,607                  Number of obs    =      30,607
+No. of failures =       10,550
+Time at risk    =       394767
+                                                LR chi2(2)       =      657.97
+Log likelihood  =    3343.3169                  Prob > chi2      =      0.0000
+
+------------------------------------------------------------------------------
+          _t |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      female |  -.3580939   .0196302   -18.24   0.000    -.3965684   -.3196194
+      eduyrs |  -.0477796     .00252   -18.96   0.000    -.0527187   -.0428404
+       _cons |  -36.38195   .3487048  -104.33   0.000     -37.0654    -35.6985
+-------------+----------------------------------------------------------------
+       /ln_p |    2.11648   .0092266   229.39   0.000     2.098396    2.134564
+-------------+----------------------------------------------------------------
+           p |   8.301866   .0765982                      8.153086    8.453362
+         1/p |   .1204548   .0011114                      .1182961    .1226529
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\fanwa.BC\AppData\Local\Temp\STD2794_000000.tmp"
+
+. streg female eduyrs, dist(lognormal) tr // AFT with exp(beta)
+
+         failure _d:  deathw12
+   analysis time _t:  (deathyr-origin)
+             origin:  time byear
+  enter on or after:  time firstinyr
+                 id:  hhidpn
+
+Fitting constant-only model:
+
+Iteration 0:   log likelihood = -4479.8096  (not concave)
+Iteration 1:   log likelihood = -3613.0715  (not concave)
+Iteration 2:   log likelihood = -3516.4012  (not concave)
+Iteration 3:   log likelihood = -3374.6992  (not concave)
+Iteration 4:   log likelihood = -3187.0713  (not concave)
+Iteration 5:   log likelihood = -2838.9883  (not concave)
+Iteration 6:   log likelihood = -2414.0092  (not concave)
+Iteration 7:   log likelihood =  -461.0628  (not concave)
+Iteration 8:   log likelihood =  1974.0155  
+Iteration 9:   log likelihood =  2291.7325  
+Iteration 10:  log likelihood =  2422.0734  
+Iteration 11:  log likelihood =   2422.191  
+Iteration 12:  log likelihood =   2422.191  
+
+Fitting full model:
+
+Iteration 0:   log likelihood =   2422.191  
+Iteration 1:   log likelihood =  2756.3548  
+Iteration 2:   log likelihood =   2774.827  
+Iteration 3:   log likelihood =   2774.876  
+Iteration 4:   log likelihood =   2774.876  
+
+Lognormal AFT regression
+
+No. of subjects =       30,607                  Number of obs    =      30,607
+No. of failures =       10,550
+Time at risk    =       394767
+                                                LR chi2(2)       =      705.37
+Log likelihood  =     2774.876                  Prob > chi2      =      0.0000
+
+------------------------------------------------------------------------------
+          _t | Time Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      female |   1.049534   .0029063    17.46   0.000     1.043853    1.055246
+      eduyrs |    1.00836   .0004259    19.71   0.000     1.007525    1.009195
+       _cons |   73.15805   .3968406   791.35   0.000     72.38438    73.93999
+-------------+----------------------------------------------------------------
+    /lnsigma |  -1.878352   .0075925  -247.40   0.000    -1.893233   -1.863471
+-------------+----------------------------------------------------------------
+       sigma |   .1528418   .0011605                      .1505842    .1551332
+------------------------------------------------------------------------------
+Note: Estimates are transformed only in the first equation.
+Note: _cons estimates baseline time.
+
+. 
+end of do-file
+
+. do "C:\Users\fanwa.BC\AppData\Local\Temp\STD2794_000000.tmp"
+
+. streg female eduyrs, dist(weibull) time
+
+         failure _d:  deathw12
+   analysis time _t:  (deathyr-origin)
+             origin:  time byear
+  enter on or after:  time firstinyr
+                 id:  hhidpn
+
+Fitting constant-only model:
+
+Iteration 0:   log likelihood = -2642.3155
+Iteration 1:   log likelihood = -3662256.8
+Iteration 2:   log likelihood =          .
+Iteration 3:   log likelihood =          .
+Iteration 4:   log likelihood =          .
+Iteration 5:   log likelihood =          .
+Iteration 6:   log likelihood =          .
+Iteration 7:   log likelihood =          .
+Iteration 8:   log likelihood =          .
+Iteration 9:   log likelihood =          .
+Iteration 10:   log likelihood =          .
+Iteration 11:   log likelihood =          .
+Iteration 12:   log likelihood =          .
+Iteration 13:   log likelihood =          .
+Iteration 14:   log likelihood =          .
+Iteration 15:   log likelihood =          .
+Iteration 16:   log likelihood =          .
+Iteration 17:   log likelihood =          .
+Iteration 18:   log likelihood =          .
+Iteration 19:   log likelihood =          .
+Iteration 20:   log likelihood =          .
+convergence not achieved
+
+Attempting constant-only model again:
+
+initial:       log likelihood = -4593.7235
+alternative:   log likelihood = -2087.7189
+rescale:       log likelihood = -2087.7189
+rescale eq:    log likelihood = -225.59262
+Iteration 0:   log likelihood = -225.59262  (not concave)
+Iteration 1:   log likelihood =  1382.6521  
+Iteration 2:   log likelihood =  2714.4366  
+Iteration 3:   log likelihood =  3011.5633  
+Iteration 4:   log likelihood =  3014.3307  
+Iteration 5:   log likelihood =  3014.3332  
+Iteration 6:   log likelihood =  3014.3332  
+
+Fitting full model:
+
+Iteration 0:   log likelihood =  3014.3332  
+Iteration 1:   log likelihood =  3334.9896  
+Iteration 2:   log likelihood =  3343.3105  
+Iteration 3:   log likelihood =  3343.3169  
+Iteration 4:   log likelihood =  3343.3169  
+
+Weibull AFT regression
+
+No. of subjects =       30,607                  Number of obs    =      30,607
+No. of failures =       10,550
+Time at risk    =       394767
+                                                LR chi2(2)       =      657.97
+Log likelihood  =    3343.3169                  Prob > chi2      =      0.0000
+
+------------------------------------------------------------------------------
+          _t |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      female |   .0431341   .0023522    18.34   0.000     .0385239    .0477443
+      eduyrs |   .0057553   .0003164    18.19   0.000     .0051351    .0063754
+       _cons |   4.382382   .0039853  1099.64   0.000     4.374571    4.390193
+-------------+----------------------------------------------------------------
+       /ln_p |    2.11648   .0092266   229.39   0.000     2.098396    2.134564
+-------------+----------------------------------------------------------------
+           p |   8.301866   .0765982                      8.153086    8.453362
+         1/p |   .1204548   .0011114                      .1182961    .1226529
+------------------------------------------------------------------------------
+
+. predict t_mean, mean time
+(104 missing values generated)
+
+. predict t_median, median time
+(104 missing values generated)
+
+. 
+end of do-file
+
+. bysort female: sum t_mean
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> female = 0
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+      t_mean |     14,020    81.00308    1.684833   75.50046   83.26085
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> female = 1
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+      t_mean |     16,587    84.46193    1.607638   78.82836   86.93082
+
+
+. do "C:\Users\fanwa.BC\AppData\Local\Temp\STD2794_000000.tmp"
+
+. streg female eduyrs, dist(weibull)
+
+         failure _d:  deathw12
+   analysis time _t:  (deathyr-origin)
+             origin:  time byear
+  enter on or after:  time firstinyr
+                 id:  hhidpn
+
+Fitting constant-only model:
+
+Iteration 0:   log likelihood = -2642.3155
+Iteration 1:   log likelihood = -3662256.8
+Iteration 2:   log likelihood =          .
+Iteration 3:   log likelihood =          .
+Iteration 4:   log likelihood =          .
+Iteration 5:   log likelihood =          .
+Iteration 6:   log likelihood =          .
+Iteration 7:   log likelihood =          .
+Iteration 8:   log likelihood =          .
+Iteration 9:   log likelihood =          .
+Iteration 10:   log likelihood =          .
+Iteration 11:   log likelihood =          .
+Iteration 12:   log likelihood =          .
+Iteration 13:   log likelihood =          .
+Iteration 14:   log likelihood =          .
+Iteration 15:   log likelihood =          .
+Iteration 16:   log likelihood =          .
+Iteration 17:   log likelihood =          .
+Iteration 18:   log likelihood =          .
+Iteration 19:   log likelihood =          .
+Iteration 20:   log likelihood =          .
+convergence not achieved
+
+Attempting constant-only model again:
+
+initial:       log likelihood = -4593.7235
+alternative:   log likelihood = -2087.7189
+rescale:       log likelihood = -2087.7189
+rescale eq:    log likelihood = -225.59262
+Iteration 0:   log likelihood = -225.59262  (not concave)
+Iteration 1:   log likelihood =  1382.6521  
+Iteration 2:   log likelihood =  2714.4366  
+Iteration 3:   log likelihood =  3011.5633  
+Iteration 4:   log likelihood =  3014.3307  
+Iteration 5:   log likelihood =  3014.3332  
+Iteration 6:   log likelihood =  3014.3332  
+
+Fitting full model:
+
+Iteration 0:   log likelihood =  3014.3332  
+Iteration 1:   log likelihood =  3334.9896  
+Iteration 2:   log likelihood =  3343.3105  
+Iteration 3:   log likelihood =  3343.3169  
+Iteration 4:   log likelihood =  3343.3169  
+
+Weibull PH regression
+
+No. of subjects =       30,607                  Number of obs    =      30,607
+No. of failures =       10,550
+Time at risk    =       394767
+                                                LR chi2(2)       =      657.97
+Log likelihood  =    3343.3169                  Prob > chi2      =      0.0000
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      female |   .6990074   .0137217   -18.24   0.000     .6726243    .7264254
+      eduyrs |   .9533439   .0024024   -18.96   0.000     .9486468    .9580643
+       _cons |   1.58e-16   5.52e-17  -104.33   0.000     7.99e-17    3.14e-16
+-------------+----------------------------------------------------------------
+       /ln_p |    2.11648   .0092266   229.39   0.000     2.098396    2.134564
+-------------+----------------------------------------------------------------
+           p |   8.301866   .0765982                      8.153086    8.453362
+         1/p |   .1204548   .0011114                      .1182961    .1226529
+------------------------------------------------------------------------------
+Note: Estimates are transformed only in the first equation.
+Note: _cons estimates baseline hazard.
+
+. 
+end of do-file
+
+. do "C:\Users\fanwa.BC\AppData\Local\Temp\STD2794_000000.tmp"
+
+. margins, predict(mean)
+
+Predictive margins                              Number of obs     =     30,607
+Model VCE    : OIM
+
+Expression   : Predicted mean _t, predict(mean)
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       _cons |   82.87755   .1110221   746.50   0.000     82.65995    83.09515
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\fanwa.BC\AppData\Local\Temp\STD2794_000000.tmp"
+
+. margins, predict(mean) at(female = (0 1))
+
+Predictive margins                              Number of obs     =     30,607
+Model VCE    : OIM
+
+Expression   : Predicted mean _t, predict(mean)
+
+1._at        : female          =           0
+
+2._at        : female          =           1
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |   80.94516   .1481158   546.50   0.000     80.65485    81.23546
+          2  |   84.51305   .1466855   576.15   0.000     84.22555    84.80055
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\fanwa.BC\AppData\Local\Temp\STD2794_000000.tmp"
+
+. margins, predict(mean) dydx(female) at(eduyrs = (9(3)15))
+
+Average marginal effects                        Number of obs     =     30,607
+Model VCE    : OIM
+
+Expression   : Predicted mean _t, predict(mean)
+dy/dx w.r.t. : female
+
+1._at        : eduyrs          =           9
+
+2._at        : eduyrs          =          12
+
+3._at        : eduyrs          =          15
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+female       |
+         _at |
+          1  |   3.511707   .1916068    18.33   0.000     3.136165     3.88725
+          2  |   3.572866   .1950738    18.32   0.000     3.190529    3.955204
+          3  |   3.635091   .1986634    18.30   0.000     3.245717    4.024464
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\fanwa.BC\AppData\Local\Temp\STD2794_000000.tmp"
+
+. marginsplot
+
+  Variables that uniquely identify margins: eduyrs
+
+. 
+end of do-file
+
+.  streg female##c.eduyrs, dist(weibull)
+
+         failure _d:  deathw12
+   analysis time _t:  (deathyr-origin)
+             origin:  time byear
+  enter on or after:  time firstinyr
+                 id:  hhidpn
+
+Fitting constant-only model:
+
+Iteration 0:   log likelihood = -2642.3155
+Iteration 1:   log likelihood = -3662256.8
+Iteration 2:   log likelihood =          .
+Iteration 3:   log likelihood =          .
+Iteration 4:   log likelihood =          .
+Iteration 5:   log likelihood =          .
+Iteration 6:   log likelihood =          .
+Iteration 7:   log likelihood =          .
+Iteration 8:   log likelihood =          .
+Iteration 9:   log likelihood =          .
+Iteration 10:   log likelihood =          .
+Iteration 11:   log likelihood =          .
+Iteration 12:   log likelihood =          .
+Iteration 13:   log likelihood =          .
+Iteration 14:   log likelihood =          .
+Iteration 15:   log likelihood =          .
+Iteration 16:   log likelihood =          .
+Iteration 17:   log likelihood =          .
+Iteration 18:   log likelihood =          .
+Iteration 19:   log likelihood =          .
+Iteration 20:   log likelihood =          .
+convergence not achieved
+
+Attempting constant-only model again:
+
+initial:       log likelihood = -4593.7235
+alternative:   log likelihood = -2087.7189
+rescale:       log likelihood = -2087.7189
+rescale eq:    log likelihood = -225.59262
+Iteration 0:   log likelihood = -225.59262  (not concave)
+Iteration 1:   log likelihood =  1382.6521  
+Iteration 2:   log likelihood =  2714.4366  
+Iteration 3:   log likelihood =  3011.5633  
+Iteration 4:   log likelihood =  3014.3307  
+Iteration 5:   log likelihood =  3014.3332  
+Iteration 6:   log likelihood =  3014.3332  
+
+Fitting full model:
+
+Iteration 0:   log likelihood =  3014.3332  
+Iteration 1:   log likelihood =  3324.6067  
+Iteration 2:   log likelihood =  3343.3616  
+Iteration 3:   log likelihood =  3343.4223  
+Iteration 4:   log likelihood =  3343.4223  
+
+Weibull PH regression
+
+No. of subjects =       30,607                  Number of obs    =      30,607
+No. of failures =       10,550
+Time at risk    =       394767
+                                                LR chi2(3)       =      658.18
+Log likelihood  =    3343.4223                  Prob > chi2      =      0.0000
+
+---------------------------------------------------------------------------------
+             _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------+----------------------------------------------------------------
+       1.female |   .6816505   .0396569    -6.59   0.000     .6081921    .7639814
+         eduyrs |   .9523341   .0032518   -14.30   0.000     .9459819     .958729
+                |
+female#c.eduyrs |
+             1  |   1.002294   .0050018     0.46   0.646     .9925383    1.012145
+                |
+          _cons |   1.60e-16   5.57e-17  -104.19   0.000     8.05e-17    3.16e-16
+----------------+----------------------------------------------------------------
+          /ln_p |   2.116586   .0092288   229.35   0.000     2.098498    2.134674
+----------------+----------------------------------------------------------------
+              p |    8.30274   .0766239                       8.15391    8.454286
+            1/p |   .1204422   .0011115                      .1182832    .1226406
+---------------------------------------------------------------------------------
+Note: Estimates are transformed only in the first equation.
+Note: _cons estimates baseline hazard.
+
+. do "C:\Users\fanwa.BC\AppData\Local\Temp\STD2794_000000.tmp"
+
+. streg female eduyrs, dist(gompertz)
+
+         failure _d:  deathw12
+   analysis time _t:  (deathyr-origin)
+             origin:  time byear
+  enter on or after:  time firstinyr
+                 id:  hhidpn
+
+Fitting constant-only model:
+
+Iteration 0:   log likelihood = -2642.1976  
+Iteration 1:   log likelihood = -132.15655  
+Iteration 2:   log likelihood =  3034.2804  
+Iteration 3:   log likelihood =  3041.6614  
+Iteration 4:   log likelihood =   3041.664  
+Iteration 5:   log likelihood =   3041.664  
+
+Fitting full model:
+
+Iteration 0:   log likelihood =   3041.664  
+Iteration 1:   log likelihood =  3365.0357  
+Iteration 2:   log likelihood =  3373.3431  
+Iteration 3:   log likelihood =  3373.3494  
+Iteration 4:   log likelihood =  3373.3494  
+
+Gompertz PH regression
+
+No. of subjects =       30,607                  Number of obs    =      30,607
+No. of failures =       10,550
+Time at risk    =       394767
+                                                LR chi2(2)       =      663.37
+Log likelihood  =    3373.3494                  Prob > chi2      =      0.0000
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      female |   .6927283   .0136109   -18.68   0.000     .6665586    .7199254
+      eduyrs |   .9540539   .0024036   -18.67   0.000     .9493546    .9587765
+       _cons |   .0000473   4.02e-06  -117.39   0.000     .0000401    .0000559
+-------------+----------------------------------------------------------------
+      /gamma |    .095298   .0009459   100.74   0.000      .093444     .097152
+------------------------------------------------------------------------------
+Note: Estimates are transformed only in the first equation.
+Note: _cons estimates baseline hazard.
+
+. 
+end of do-file
+
+. do "C:\Users\fanwa.BC\AppData\Local\Temp\STD2794_000000.tmp"
+
+. stcurve, hazard at1(female = 0 eduyrs = 9) ///
+>                                 at2(female = 0 eduyrs = 16) ///
+>                                 at3(female = 1 eduyrs = 9) ///
+>                                 at4(female = 1 eduyrs = 16)
+
+. 
+end of do-file
+
+. do "C:\Users\fanwa.BC\AppData\Local\Temp\STD2794_000000.tmp"
+
+. stcurve, survival
+
+. 
+end of do-file
+
+. log close
+      name:  <unnamed>
+       log:  C:\Users\fanwa.BC\Downloads\Untitled.log
+  log type:  text
+ closed on:  19 Feb 2019, 11:46:57
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,512 @@
+----------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\fanwa.BC.001\Downloads\2019-03-19 SemiparametricDiscrete.log
+  log type:  text
+ opened on:  19 Mar 2019, 10:32:08
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. drop if deathyr >= .
+(3,577 observations deleted)
+
+. stset deathyr, failure(deathw12) id(hhidpn) origin(time byear) enter(time firstinyr)
+
+                id:  hhidpn
+     failure event:  deathw12 != 0 & deathw12 < .
+obs. time interval:  (deathyr[_n-1], deathyr]
+ enter on or after:  time firstinyr
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time byear
+
+------------------------------------------------------------------------------
+     33,918  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+     33,918  observations remaining, representing
+     33,918  subjects
+     10,716  failures in single-failure-per-subject data
+    441,292  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =        18
+                                          last observed exit t =       115
+
+. drop if _t0 < 50
+(3,207 observations deleted)
+
+. 
+end of do-file
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. d, s
+
+Contains data from C:\Users\fanwa.BC.001\Downloads\hrs.dta
+  obs:        30,711                          
+ vars:            23                          11 Feb 2019 19:25
+ size:     1,443,417                          
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. 
+end of do-file
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. stsplit gt65, at(65)
+(12,227 observations (episodes) created)
+
+. 
+end of do-file
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. d, s
+
+Contains data from C:\Users\fanwa.BC.001\Downloads\hrs.dta
+  obs:        42,938                          
+ vars:            24                          11 Feb 2019 19:25
+ size:     2,061,024                          
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. 
+end of do-file
+
+. order hhidpn _* deathw12
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. gen femalegt65 = female * (gt65 == 65)
+
+. 
+end of do-file
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. stcox female femalegt65, noshow nolog // compare results with stcox female, tvc(female) texp(_t > 65) after st
+> join
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =       30,711                  Number of obs    =      42,938
+No. of failures =       10,557
+Time at risk    =       395444
+                                                LR chi2(2)       =      318.22
+Log likelihood  =   -91226.729                  Prob > chi2      =      0.0000
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      female |     .62202   .0369744    -7.99   0.000     .5536137    .6988788
+  femalegt65 |    1.15065   .0724992     2.23   0.026     1.016978    1.301892
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. stcoxfemalefemalegt65,noshownolog nohr
+command stcoxfemalefemalegt65 is unrecognized
+r(199);
+
+. stcox female femalegt65, noshow nolog nohr
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =       30,711                  Number of obs    =      42,938
+No. of failures =       10,557
+Time at risk    =       395444
+                                                LR chi2(2)       =      318.22
+Log likelihood  =   -91226.729                  Prob > chi2      =      0.0000
+
+------------------------------------------------------------------------------
+          _t |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+      female |   -.474783   .0594424    -7.99   0.000    -.5912881    -.358278
+  femalegt65 |    .140327   .0630072     2.23   0.026     .0168351    .2638188
+------------------------------------------------------------------------------
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. drop femalegt65 gt65
+
+. 
+end of do-file
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. stjoin
+(option censored(0) assumed)
+(12227 obs. eliminated)
+
+. 
+end of do-file
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. d, s
+
+Contains data from C:\Users\fanwa.BC.001\Downloads\hrs.dta
+  obs:        30,711                          
+ vars:            23                          11 Feb 2019 19:25
+ size:     1,443,417                          
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. 
+end of do-file
+
+. stcox female, noshow nolog tvc(female) texp(_t > 65)
+
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =       30,711                  Number of obs    =      30,711
+No. of failures =       10,557
+Time at risk    =       395444
+                                                LR chi2(2)       =      318.22
+Log likelihood  =   -91226.729                  Prob > chi2      =      0.0000
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+main         |
+      female |     .62202   .0369744    -7.99   0.000     .5536137    .6988788
+-------------+----------------------------------------------------------------
+tvc          |
+      female |    1.15065   .0724992     2.23   0.026     1.016978    1.301892
+------------------------------------------------------------------------------
+Note: Variables in tvc equation interacted with _t>65.
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. gen year = firstinyr + (_t - _t0)
+
+. 
+end of do-file
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. stset year, failure(deathw12) id(hhidpn)
+
+                id:  hhidpn
+     failure event:  deathw12 != 0 & deathw12 < .
+obs. time interval:  (year[_n-1], year]
+ exit on or before:  failure
+
+------------------------------------------------------------------------------
+     30,711  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+     30,711  observations remaining, representing
+     30,711  subjects
+     10,557  failures in single-failure-per-subject data
+   61753181  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =     2,015
+
+. 
+end of do-file
+
+. order hhidpn _* deathw12
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. d, s
+
+Contains data from C:\Users\fanwa.BC.001\Downloads\hrs.dta
+  obs:        30,711                          
+ vars:            23                          11 Feb 2019 19:25
+ size:     1,474,128                          
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. 
+end of do-file
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. stsplit cutoff, at(1994 1996 1998 2000 2002 2004 2006 2008 2010 2012 2014)
+(270,478 observations (episodes) created)
+
+. 
+end of do-file
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. d, s
+
+Contains data from C:\Users\fanwa.BC.001\Downloads\hrs.dta
+  obs:       301,189                          
+ vars:            24                          11 Feb 2019 19:25
+ size:    15,360,639                          
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. 
+end of do-file
+
+. order hhidpn _* deathw12 cutoff
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. gen bp = .
+(301,189 missing values generated)
+
+.         label var bp "blood pressure"
+
+.         replace bp = bpw2 if cutoff == 1994
+(9,119 real changes made)
+
+.         replace bp = bpw3 if cutoff == 1996
+(14,291 real changes made)
+
+.         replace bp = bpw4 if cutoff == 1998
+(13,162 real changes made)
+
+.         replace bp = bpw5 if cutoff == 2000
+(15,551 real changes made)
+
+.         replace bp = bpw6 if cutoff == 2002
+(14,407 real changes made)
+
+.         replace bp = bpw7 if cutoff == 2004
+(13,180 real changes made)
+
+.         replace bp = bpw8 if cutoff == 2006
+(14,360 real changes made)
+
+.         replace bp = bpw9 if cutoff == 2008
+(13,245 real changes made)
+
+.         replace bp = bpw10 if cutoff == 2010
+(12,032 real changes made)
+
+.         replace bp = bpw11 if cutoff == 2012
+(16,461 real changes made)
+
+.         replace bp = bpw12 if cutoff == 2014
+(16,066 real changes made)
+
+. 
+end of do-file
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. list hhidpn cutoff bp* in 30/60
+
+     +--------------------------------------------------------------------------------------------------------+
+     |   hhidpn   cutoff   bpw2   bpw3   bpw4   bpw5   bpw6   bpw7   bpw8   bpw9   bpw10   bpw11   bpw12   bp |
+     |--------------------------------------------------------------------------------------------------------|
+ 30. | 10001010     2012      0      0      0      0      0      0      0      0       0       0       0    0 |
+ 31. | 10001010     2014      0      0      0      0      0      0      0      0       0       0       0    0 |
+ 32. | 10003020        0      0      0      0      .      .      .      .      .       .       .       .    . |
+ 33. | 10003020     1994      0      0      0      .      .      .      .      .       .       .       .    0 |
+ 34. | 10003020     1996      0      0      0      .      .      .      .      .       .       .       .    0 |
+     |--------------------------------------------------------------------------------------------------------|
+ 35. | 10003020     1998      0      0      0      .      .      .      .      .       .       .       .    0 |
+ 36. | 10004010        0      0      0      0      0      0      0      0      0       0       .       .    . |
+ 37. | 10004010     1994      0      0      0      0      0      0      0      0       0       .       .    0 |
+ 38. | 10004010     1996      0      0      0      0      0      0      0      0       0       .       .    0 |
+ 39. | 10004010     1998      0      0      0      0      0      0      0      0       0       .       .    0 |
+     |--------------------------------------------------------------------------------------------------------|
+ 40. | 10004010     2000      0      0      0      0      0      0      0      0       0       .       .    0 |
+ 41. | 10004010     2002      0      0      0      0      0      0      0      0       0       .       .    0 |
+ 42. | 10004010     2004      0      0      0      0      0      0      0      0       0       .       .    0 |
+ 43. | 10004010     2006      0      0      0      0      0      0      0      0       0       .       .    0 |
+ 44. | 10004010     2008      0      0      0      0      0      0      0      0       0       .       .    0 |
+     |--------------------------------------------------------------------------------------------------------|
+ 45. | 10004010     2010      0      0      0      0      0      0      0      0       0       .       .    0 |
+ 46. | 10013010        0      .      1      0      0      0      0      0      0       0       0       0    . |
+ 47. | 10013010     1994      .      1      0      0      0      0      0      0       0       0       0    . |
+ 48. | 10013010     1996      .      1      0      0      0      0      0      0       0       0       0    1 |
+ 49. | 10013010     1998      .      1      0      0      0      0      0      0       0       0       0    0 |
+     |--------------------------------------------------------------------------------------------------------|
+ 50. | 10013010     2000      .      1      0      0      0      0      0      0       0       0       0    0 |
+ 51. | 10013010     2002      .      1      0      0      0      0      0      0       0       0       0    0 |
+ 52. | 10013010     2004      .      1      0      0      0      0      0      0       0       0       0    0 |
+ 53. | 10013010     2006      .      1      0      0      0      0      0      0       0       0       0    0 |
+ 54. | 10013010     2008      .      1      0      0      0      0      0      0       0       0       0    0 |
+     |--------------------------------------------------------------------------------------------------------|
+ 55. | 10013010     2010      .      1      0      0      0      0      0      0       0       0       0    0 |
+ 56. | 10013010     2012      .      1      0      0      0      0      0      0       0       0       0    0 |
+ 57. | 10013010     2014      .      1      0      0      0      0      0      0       0       0       0    0 |
+ 58. | 10038010        0      0      0      0      0      0      0      0      0       0       0       0    . |
+ 59. | 10038010     1994      0      0      0      0      0      0      0      0       0       0       0    0 |
+     |--------------------------------------------------------------------------------------------------------|
+ 60. | 10038010     1996      0      0      0      0      0      0      0      0       0       0       0    0 |
+     +--------------------------------------------------------------------------------------------------------+
+
+. 
+end of do-file
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. bysort hhidpn (year): gen order = _n
+
+. bysort hhidpn: gen maxorder = _N
+
+.         replace deathw12 = 0 if order != maxorder
+(270,478 real changes made)
+
+. 
+end of do-file
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. stset year, failure(deathw12) id(hhidpn) origin(time byear) enter(time firstinyr)
+
+                id:  hhidpn
+     failure event:  deathw12 != 0 & deathw12 < .
+obs. time interval:  (year[_n-1], year]
+ enter on or after:  time firstinyr
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time byear
+
+------------------------------------------------------------------------------
+    301,189  total observations
+     87,180  observations end on or before enter()
+------------------------------------------------------------------------------
+    214,009  observations remaining, representing
+     30,711  subjects
+     10,557  failures in single-failure-per-subject data
+    395,444  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =        50
+                                          last observed exit t =       115
+
+. 
+end of do-file
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. stcox female c.eduyrs##c.eduyrs bp, noshow nolog
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =       28,006                  Number of obs    =     151,643
+No. of failures =        8,390
+Time at risk    =       282922
+                                                LR chi2(4)       =      666.84
+Log likelihood  =   -69830.053                  Prob > chi2      =      0.0000
+
+-----------------------------------------------------------------------------------
+               _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+------------------+----------------------------------------------------------------
+           female |   .6885236   .0152844   -16.81   0.000      .659209    .7191418
+           eduyrs |   1.061927   .0123581     5.16   0.000     1.037979    1.086426
+                  |
+c.eduyrs#c.eduyrs |    .994197   .0005753   -10.06   0.000     .9930701    .9953252
+                  |
+               bp |   1.156405   .0568364     2.96   0.003     1.050205    1.273344
+-----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. order hhidpn _* bp
+
+. bysort hhidpn (_t): gen bplag = bp[_n - 1]
+(162,421 missing values generated)
+
+. order hhidpn _* bp bplag
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. stcox female c.eduyrs##c.eduyrs bplag, noshow nolog
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =       26,378                  Number of obs    =     127,265
+No. of failures =        7,270
+Time at risk    =       234297
+                                                LR chi2(4)       =      576.76
+Log likelihood  =   -59549.831                  Prob > chi2      =      0.0000
+
+-----------------------------------------------------------------------------------
+               _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+------------------+----------------------------------------------------------------
+           female |   .6897879   .0164598   -15.56   0.000       .65827    .7228149
+           eduyrs |   1.058841   .0132572     4.57   0.000     1.033173    1.085146
+                  |
+c.eduyrs#c.eduyrs |   .9942941   .0006173    -9.22   0.000      .993085    .9955047
+                  |
+            bplag |   1.122079   .0599042     2.16   0.031     1.010602    1.245851
+-----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. help reshape
+
+. use "C:\Users\fanwa.BC.001\Downloads\hrs.dta" , clear
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. drop if deathyr >= .
+(3,577 observations deleted)
+
+. stset deathyr, failure(deathw12) id(hhidpn) origin(time byear) enter(time firstinyr)
+
+                id:  hhidpn
+     failure event:  deathw12 != 0 & deathw12 < .
+obs. time interval:  (deathyr[_n-1], deathyr]
+ enter on or after:  time firstinyr
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time byear
+
+------------------------------------------------------------------------------
+     33,918  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+     33,918  observations remaining, representing
+     33,918  subjects
+     10,716  failures in single-failure-per-subject data
+    441,292  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =        18
+                                          last observed exit t =       115
+
+. drop if _t0 < 50
+(3,207 observations deleted)
+
+. 
+end of do-file
+
+. d,s
+
+Contains data from C:\Users\fanwa.BC.001\Downloads\hrs.dta
+  obs:        30,711                          
+ vars:            23                          11 Feb 2019 19:25
+ size:     1,443,417                          
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. do "C:\Users\FANWAB~1.001\AppData\Local\Temp\STD334_000000.tmp"
+
+. reshape long bpw@, i(hhidpn) j(wave)
+(note: j = 2 3 4 5 6 7 8 9 10 11 12)
+
+Data                               wide   ->   long
+-----------------------------------------------------------------------------
+Number of obs.                    30711   ->  337821
+Number of variables                  23   ->      14
+j variable (11 values)                    ->   wave
+xij variables:
+                    bpw2 bpw3 ... bpw12   ->   bpw
+-----------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. order hhidpn _* bp
+
+. log close
+      name:  <unnamed>
+       log:  C:\Users\fanwa.BC.001\Downloads\2019-03-19 SemiparametricDiscrete.log
+  log type:  text
+ closed on:  19 Mar 2019, 11:45:50
+----------------------------------------------------------------------------------------------------------------

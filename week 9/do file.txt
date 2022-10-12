@@ -1,0 +1,184 @@
+
+******************************************************************************
+* SOC7717 (S19-Fan). Semi-Parametric methods for survival analysis           *
+******************************************************************************
+
+// program: soc7717_SemiParametricModels.do
+// task: perform semi-parametric analysis
+// project: event history analysis and sequence analysis
+// author: Wen Fan / 2019-03-19
+
+
+*** 0. program setup
+
+version 14.1
+clear all
+set linesize 80
+macro drop _all
+
+
+*** 1. open data
+
+cd "ENTER WORKING DIRECTORY HERE"
+capture log close
+log using soc7717_ParametricModels_Log, replace text
+use hrs.dta, clear
+
+
+*** 2. stset
+
+drop if deathyr >= .
+stset deathyr, failure(deathw12) id(hhidpn) origin(time byear) enter(time firstinyr)
+drop if _t0 < 50
+
+/* survey data
+svyset PSU [pweight = WEIGHT], strata(STRATA)
+svy: stcox ...
+
+stset deathyr [pweight = WEIGHT], failure(deathw12) id(hhidpn) origin(time byear) enter(time firstinyr)
+*/
+
+
+*** 3. fit semi-parametric models (Cox)
+
+stcox female, nohr noshow nolog // original b
+stcox female, noshow nolog // hazard ratios, exp(b)
+
+* ties
+stcox female, exactm noshow nolog // exact marginal
+stcox female, exactp noshow nolog // exact partial
+stcox female, efron noshow nolog	// Efron
+stcox female, noshow nolog // Breslow
+
+
+*** 4. test the proportional hazards assumption
+
+stcurve, survival at1(female = 0) at2(female = 1) // plot the survival function by gender and see if they cross
+
+stphplot, by(female) adjust(eduyrs) // log-log plots, can also add adjust() or strata()
+
+stcox female, tvc(female) noshow nolog
+stcox female, tvc(female) texp(_t > 60) noshow nolog
+stcox female, tvc(female) texp(ln(_t)) noshow nolog
+
+stcox female eduyrs
+estat phtest, detail // options: km, log, rank
+estat phtest, plot(eduyrs)
+
+stcoxkm, by(female)
+
+
+*** 5. other residuals
+
+/* Cox-Snell residuals
+stcox female, noshow nolog
+predict cs, csnell
+stset cs, failure(deathw12) id(hhidpn)
+sts gen H = na
+line H cs cs, sort ytitle("") legend(cols(1))
+*/
+
+* Martingale residuals
+stcox, estimate
+predict mres, mgale
+lowess mres eduyrs
+stcox female c.eduyrs##c.eduyrs, estimate
+
+* dfbeta
+predict dfb*, dfbeta
+scatter dfb2 _t, yline(0) mlabel(hhidpn) msymbol(i)
+forvalues i = 1/3 {
+	count if abs(dfb`i') > 2/sqrt(30607) & dfb`i' < .
+}
+
+
+*** 6. estimate the survivor and hazard functions
+
+* obtain the estimated baseline cumulative hazard
+stcox female
+predict H0, basechazard
+line H0 _t, c(J) sort // the c(J) option graphs the data as a step function
+gen H1 = H0 * .7046838
+line H1 H0 _t, c(J J) sort
+stcurve, cumhaz at1(female = 0) at2(female = 1) // another way to get cumulative hazard by gender
+
+* obtain the estimated baseline survival function
+predict S0, basesurv
+line S0 _t, c(J) sort
+gen S1 = S0^.7046838
+line S1 S0 _t, c(J J) sort
+stcurve, survival at1(female = 0) at2(female = 1) // another way to get survival function by gender
+
+* obtain the estimated baseline hazard function
+stcurve, hazard at1(female = 0) at2(female = 1)
+
+
+*** 7. stratified model
+
+stcox c.eduyrs##c.eduyrs, strata(female)
+predict Hz, basechazard
+gen HM = Hz if female == 0
+gen HF = Hz if female == 1
+line HM HF _t, c(J J) sort
+
+
+*** 8. time-varying variables
+
+d, s
+stsplit gt65, at(65)
+d, s
+gen femalegt65 = female * (gt65 == 65)
+stcox female femalegt65, noshow nolog // compare results with "stcox female, tvc(female) texp(_t > 65)" after stjoin
+drop femalegt65 gt65
+stjoin
+d, s
+
+/* other ways to stsplit
+stsplit cutoff, at(5 10 25 100)
+stsplit, at(failures)
+*/
+
+* blood pressure as an illustrative case
+// first reshape the data into long form through stsplit
+gen year = firstinyr + (_t - _t0)
+stset year, failure(deathw12) id(hhidpn)
+d, s
+stsplit cutoff, at(1994 1996 1998 2000 2002 2004 2006 2008 2010 2012 2014)
+d, s
+
+// generate blood pressure as a time-varying variable
+gen bp = .
+	label var bp "blood pressure"
+	replace bp = bpw2 if cutoff == 1994
+	replace bp = bpw3 if cutoff == 1996
+	replace bp = bpw4 if cutoff == 1998
+	replace bp = bpw5 if cutoff == 2000
+	replace bp = bpw6 if cutoff == 2002
+	replace bp = bpw7 if cutoff == 2004
+	replace bp = bpw8 if cutoff == 2006
+	replace bp = bpw9 if cutoff == 2008
+	replace bp = bpw10 if cutoff == 2010
+	replace bp = bpw11 if cutoff == 2012
+	replace bp = bpw12 if cutoff == 2014
+/* alternatively,
+forvalues i = 2/12 {
+	replace bp = bpw`i' if cutoff == 1994 + (`i' - 2) * 2
+}
+*/
+list hhidpn cutoff bp* in 30/60
+
+// restset the data
+bysort hhidpn (year): gen order = _n
+bysort hhidpn: gen maxorder = _N
+	replace deathw12 = 0 if order != maxorder
+stset year, failure(deathw12) id(hhidpn) origin(time byear) enter(time firstinyr)
+stcox female c.eduyrs##c.eduyrs bp, noshow nolog
+
+bysort hhidpn (year): gen bplag = bp[_n - 1] // one-wave lagged measure
+stcox female c.eduyrs##c.eduyrs bplag, noshow nolog
+
+// can also use reshape
+reshape long bpw@, i(hhidpn) j(wave)
+
+log close
+exit
